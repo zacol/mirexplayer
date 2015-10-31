@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html ng-app="app">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Mirex Player</title>
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+	</head>
+	<body>
+        <div class="container" ng-controller="PlayerCtrl">
+			<h1>Playlist</h1>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Email</th>
+						<th>Number</th>
+						<th>Action</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<input type="text" ng-model="song.name" class="form-control">
+						</td>
+						<td>
+							<input type="text" ng-model="song.email" class="form-control">
+						</td>
+						<td>
+							<input type="text" ng-model="song.number" class="form-control">
+						</td>
+						<td>
+							<input type="button" ng-click="addSong()" class="btn btn-primary" value="Add Song">
+						</td>
+					</tr>
+					<tr ng-repeat="song in songList">
+						<td>{{song.name}}</td>
+						<td>{{song.email}}</td>
+						<td>{{song.number}}</td>
+						<td><input type="button" ng-click=removeSong(song._id) class="btn btn-danger" value="Remove"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<script src="scripts/app.min.js"></script>
+	</body>
+</html>

@@ -2,10 +2,14 @@
   "name": "mirexplayer",
   "version": "0.0.1",
   "description": "Music player",
-  "main": "index.html",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Jacek Spławski",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "angular": "^1.4.7",
+    "body-parser": "^1.14.1",
+    "browserify": "^12.0.1",
+    "express": "^4.13.3",
+    "jquery": "^2.1.4",
+    "mongojs": "^1.4.1"
+  }
 }

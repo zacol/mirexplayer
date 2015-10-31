@@ -1,0 +1,11 @@
+{
+  "name": "mirexplayer",
+  "version": "0.0.1",
+  "description": "Music player",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jacek Spławski",
+  "license": "MIT"
+}

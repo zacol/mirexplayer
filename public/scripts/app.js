@@ -1,5 +1,7 @@
 window.$ = window.jQuery = require('jquery');
 var angular = require('angular');
+var io = require('socket.io-client');
+var socket = io();
 
 var app = angular.module('app', []);
 
@@ -28,15 +30,21 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
 
     $scope.addSong = function() {
         playerService.addSong($scope.song).success(function(response) {
+            socket.emit('add song', true);
             $scope.getSongList();
         });
     };
 
     $scope.removeSong = function(songId) {
         playerService.removeSong(songId).success(function(response) {
+            socket.emit('remove song', true);
             $scope.getSongList();
         });
     };
 
     $scope.getSongList();
+
+    socket.on('get song list', function() {
+        $scope.getSongList();
+    });
 }]);

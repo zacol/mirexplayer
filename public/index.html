@@ -8,45 +8,54 @@
 
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+        <link rel="stylesheet" href="css/main.css">
 	</head>
 	<body>
-        <div class="container" ng-controller="PlayerCtrl">
-			<h1>Playlist</h1>
-			<table class="table">
+        <div class="container" ng-controller="PlayerCtrl" ng-cloak>
+            <table class="table table-search">
+                <thead>
+                    <tr>
+                        <th colspan="2">Search</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" ng-model="search.phrase" class="form-control">
+                        </td>
+                        <td>
+                            <input type="button" ng-click="searchSong()" class="btn btn-primary" value="Search">
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr ng-repeat="result in search.results">
+                        <td>
+                            {{ result.snippet.title }}
+                        </td>
+                        <td>
+                            <input type="button" ng-click="addSong(result.id.videoId, result.snippet.title)" class="btn btn-primary" value="Add Song">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+			<table class="table table-playlist">
 				<thead>
 					<tr>
-						<th>Name</th>
-						<th>Email</th>
-						<th>Number</th>
-						<th>Action</th>
-						<th>&nbsp;</th>
+						<th colspan="2">Title</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>
-							<input type="text" ng-model="song.name" class="form-control">
-						</td>
-						<td>
-							<input type="text" ng-model="song.email" class="form-control">
-						</td>
-						<td>
-							<input type="text" ng-model="song.number" class="form-control">
-						</td>
-						<td>
-							<input type="button" ng-click="addSong()" class="btn btn-primary" value="Add Song">
-						</td>
-					</tr>
 					<tr ng-repeat="song in songList">
-						<td>{{song.name}}</td>
-						<td>{{song.email}}</td>
-						<td>{{song.number}}</td>
+						<td>{{song.title}}</td>
 						<td><input type="button" ng-click=removeSong(song._id) class="btn btn-danger" value="Remove"></td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 
+        <script src="https://apis.google.com/js/client.js"></script>
 		<script src="scripts/app.min.js"></script>
 	</body>
 </html>

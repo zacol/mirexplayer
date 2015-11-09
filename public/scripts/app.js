@@ -2,6 +2,7 @@ window.$ = window.jQuery = require('jquery');
 var angular = require('angular');
 var io = require('socket.io-client');
 var socket = io();
+var YouTubeIframeLoader = require('youtube-iframe');
 
 var app = angular.module('app', []);
 
@@ -19,8 +20,8 @@ app.service('playerService', function($http, $q) {
         return $http.delete('/songlist/' + songId);
     };
 
-    var deferred = $q.defer();
-    this.googleApiClientReady = function (searchText) {
+    this.searchSong = function (searchText) {
+        var deferred = $q.defer();
         gapi.client.setApiKey('AIzaSyDhdrZ1OWQD9vZQrj4ZAVCe0lEBdGt4BtU');
         gapi.client.load('youtube', 'v3', function() {
             var request = gapi.client.youtube.search.list({
@@ -40,7 +41,15 @@ app.service('playerService', function($http, $q) {
 
 //Controllers
 app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, playerService) {
-    var tableSearch = $('.table-search');
+    $scope.initPlayer = function() {
+        YouTubeIframeLoader.load(function(YT) {
+            new YT.Player('player', {
+                height: '390',
+                width: '640',
+                videoId: 'M7lc1UVf-VE'
+            });
+        });
+    };
 
     $scope.getSongList = function() {
         playerService.getSongList().success(function(response) {
@@ -56,6 +65,9 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
 
         playerService.addSong(song).success(function(response) {
             socket.emit('add song');
+
+            $scope.search.phrase = '';
+            $scope.search.results = [];
             $scope.getSongList();
         });
     };
@@ -68,11 +80,12 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
     };
 
     $scope.searchSong = function() {
-        playerService.googleApiClientReady($scope.search.phrase).then(function(value) {
+        playerService.searchSong($scope.search.phrase).then(function(value) {
             $scope.search.results = value.items;
         });
     };
 
+    $scope.initPlayer();
     $scope.getSongList();
 
     socket.on('get song list', function() {

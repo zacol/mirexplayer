@@ -6,17 +6,16 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Mirex Player</title>
 
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+		<link rel="stylesheet" href="css/semantic.min.css">
         <link rel="stylesheet" href="css/main.css">
 	</head>
 	<body>
-        <div class="container" ng-controller="PlayerCtrl" ng-cloak>
-            <div class="text-center">
+        <div class="main ui container" ng-controller="PlayerCtrl" ng-cloak>
+            <div class="ui centered grid">
                 <div id="player"></div>
             </div>
 
-            <table class="table table-search">
+            <table class="ui very basic table table-search">
                 <thead>
                     <tr>
                         <th colspan="3">Search</th>
@@ -25,13 +24,15 @@
                 <tbody>
                     <tr>
                         <td style="width: 100%;">
-                            <input type="text" ng-model="search.phrase" class="form-control">
+                            <div class="ui icon input fluid">
+                                <input type="text" ng-model="search.phrase">
+                            </div>
                         </td>
                         <td>
-                            <input type="button" ng-click="searchSong()" class="btn btn-primary" value="Search">
+                            <input type="button" ng-click="searchSong()" class="ui button blue" value="Search">
                         </td>
                         <td>
-                            <input type="button" ng-click="shuffleMode = !shuffleMode" class="btn" ng-class="{'btn-success': shuffleMode}" value="Shuffle">
+                            <input type="button" ng-click="shuffleMode = !shuffleMode" class="ui button" ng-class="{'positive': shuffleMode}" value="Shuffle">
                         </td>
                     </tr>
                 </tbody>
@@ -41,13 +42,13 @@
                             {{ result.snippet.title }}
                         </td>
                         <td>
-                            <input type="button" ng-click="addSong(result.id.videoId, result.snippet.title)" class="btn btn-primary" value="Add Song">
+                            <input type="button" ng-click="addSong(result.id.videoId, result.snippet.title)" class="ui button positive" value="Add Song">
                         </td>
                     </tr>
                 </tbody>
             </table>
 
-			<table class="table table-playlist">
+			<table class="ui very basic table table-playlist">
 				<thead>
 					<tr>
 						<th>Title</th>
@@ -57,9 +58,17 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="song in songList">
-						<td>{{song.title}} <span class="btn btn-success btn-xs" ng-if="song.nowPlaying">Now playing</span> <span class="btn btn-primary btn-xs" ng-if="song.nextPlaying">Next playing</span></td>
-						<td>{{song.plays}}</td>
-						<td><input type="button" ng-click=removeSong(song._id) class="btn btn-danger" ng-disabled="song.nowPlaying || song.nextPlaying" value="Remove"></td>
+						<td>
+                            {{song.title}}
+                            <span class="ui tag label teal" ng-if="song.nowPlaying">Now playing</span>
+                            <span class="ui tag label blue" ng-if="song.nextPlaying">Next playing</span>
+                        </td>
+						<td>
+                            <span class="ui label">{{song.plays}}</span>
+                        </td>
+						<td>
+                            <input type="button" ng-click=removeSong(song._id) class="ui button negative" ng-disabled="song.nowPlaying || song.nextPlaying" value="Remove">
+                        </td>
 					</tr>
 				</tbody>
 			</table>

@@ -81,9 +81,13 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
                 $scope.playerInfo($scope.currentSong, $scope.nextSong);
             }
         } else if (event.data === YT.PlayerState.ENDED) {
-            $scope.player.loadVideoById($scope.nextSong.videoId);
-            $scope.currentSong = $scope.nextSong;
+            $scope.songList.forEach(function(song) {
+                if (song._id === $scope.nextSong._id) {
+                    $scope.currentSong = song;
+                }
+            });
             $scope.nextSong = false;
+            $scope.player.loadVideoById($scope.currentSong.videoId);
         }
     };
 

@@ -32,7 +32,7 @@ io.on('connection', function(socket) {
     });
 
     socket.on('player info', function(data) {
-        io.sockets.emit('get player info', data);
+        socket.broadcast.emit('get player info', data);
     });
 });
 

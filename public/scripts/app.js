@@ -45,7 +45,7 @@ app.service('playerService', function($http, $q) {
 
 //Controllers
 app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, playerService) {
-    $scope.shuffleMode = false;
+    $scope.shuffleMode = true;
 
     $scope.initPlayer = function() {
         YouTubeIframeLoader.load(function(YT) {
@@ -72,12 +72,12 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
     $scope.onPlayerStateChange = function(event) {
         if (event.data === YT.PlayerState.PLAYING) {
             if ($scope.nextSong === undefined || $scope.nextSong === false) {
+                $scope.updateSong($scope.currentSong);
                 if ($scope.shuffleMode) {
                     $scope.nextSong = $scope.randomizeNextSong();
                 } else {
                     $scope.nextSong = $scope.orderedNextSong();
                 }
-                $scope.updateSong($scope.currentSong);
                 $scope.playerInfo($scope.currentSong, $scope.nextSong);
             }
         } else if (event.data === YT.PlayerState.ENDED) {
@@ -152,7 +152,11 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
         var lowerPlaysCounter = $scope.getLowerPlaysCounter();
 
         var songWithLowerPlays = $scope.songList.filter(function(song) {
-            return song.plays === lowerPlaysCounter;
+            if ($scope.currentSong !== undefined) {
+                return song.plays === lowerPlaysCounter && song._id !== $scope.currentSong._id;
+            } else {
+                return song.plays === lowerPlaysCounter;
+            }
         });
 
         return randomSong = songWithLowerPlays[Math.floor(Math.random()*songWithLowerPlays.length)];

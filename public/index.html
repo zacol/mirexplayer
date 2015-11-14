@@ -31,7 +31,7 @@
                             <input type="button" ng-click="searchSong()" class="btn btn-primary" value="Search">
                         </td>
                         <td>
-                            <input type="button" ng-click="shuffleMode = !shuffleMode" class="btn" ng-class="{'btn-success': shuffleMode, 'btn-info': !shuffleMode}" value="Shuffle">
+                            <input type="button" ng-click="shuffleMode = !shuffleMode" class="btn" ng-class="{'btn-success': shuffleMode}" value="Shuffle">
                         </td>
                     </tr>
                 </tbody>
@@ -57,9 +57,9 @@
 				</thead>
 				<tbody>
 					<tr ng-repeat="song in songList">
-						<td>{{song.title}} <button type="button" class="btn btn-success btn-xs" ng-if="song.nowPlaying">Now playing</button> <button type="button" class="btn btn-primary btn-xs" ng-if="song.nextPlaying">Next playing</button></td>
+						<td>{{song.title}} <span class="btn btn-success btn-xs" ng-if="song.nowPlaying">Now playing</span> <span class="btn btn-primary btn-xs" ng-if="song.nextPlaying">Next playing</span></td>
 						<td>{{song.plays}}</td>
-						<td><input type="button" ng-click=removeSong(song._id) class="btn btn-danger" value="Remove"></td>
+						<td><input type="button" ng-click=removeSong(song._id) class="btn btn-danger" ng-disabled="song.nowPlaying || song.nextPlaying" value="Remove"></td>
 					</tr>
 				</tbody>
 			</table>

@@ -45,7 +45,7 @@ app.service('playerService', function($http, $q) {
 
 //Controllers
 app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, playerService) {
-    $scope.shuffleMode = true;
+    $scope.shuffleMode = false;
 
     $scope.initPlayer = function() {
         YouTubeIframeLoader.load(function(YT) {
@@ -162,9 +162,14 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
     };
 
     $scope.orderedNextSong = function() {
-        index = $scope.songList.indexOf($scope.currentSong);
-        if(index >= 0 && index < $scope.songList.length - 1) {
-            return nextSong = $scope.songList[index + 1];
+        for(var index = 0; index < $scope.songList.length; index += 1) {
+            if($scope.songList[index]['_id'] === $scope.currentSong._id) {
+                if (index === $scope.songList.length - 1) {
+                    return nextSong = $scope.songList[0];
+                } else {
+                    return nextSong = $scope.songList[index + 1];
+                }
+            }
         }
     };
 

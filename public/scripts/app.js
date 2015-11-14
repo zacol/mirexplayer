@@ -97,20 +97,17 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
     $scope.getSongList = function() {
         playerService.getSongList().success(function(response) {
             $scope.songList = response;
-            if ($scope.currentSong !== undefined) {
-                $scope.songList.forEach(function(song, index) {
-                    if (song._id === $scope.currentSong._id) {
-                        song.nowPlaying = true;
-                    }
-                });
+            if ($scope.currentSong === undefined && $scope.nextSong === undefined) {
+                return;
             }
-            if ($scope.nextSong !== undefined) {
-                $scope.songList.forEach(function(song, index) {
-                    if (song._id === $scope.nextSong._id) {
-                        song.nextPlaying = true;
-                    }
-                });
-            }
+            $scope.songList.forEach(function(song, index) {
+                if (song._id === $scope.currentSong._id) {
+                    song.nowPlaying = true;
+                }
+                if (song._id === $scope.nextSong._id) {
+                    song.nextPlaying = true;
+                }
+            });
         });
     };
 

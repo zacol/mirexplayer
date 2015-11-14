@@ -23,8 +23,16 @@ io.on('connection', function(socket) {
         socket.broadcast.emit('get song list');
     });
 
+    socket.on('update song', function() {
+        socket.broadcast.emit('get song list');
+    });
+
     socket.on('remove song', function() {
         socket.broadcast.emit('get song list');
+    });
+
+    socket.on('player info', function(data) {
+        io.sockets.emit('get player info', data);
     });
 });
 
@@ -41,11 +49,20 @@ app.post('/songlist', function(req, res) {
     });
 });
 
+app.put('/songlist/:id', function(req, res) {
+    var id = req.params.id;
+    db.mirexplayer.findAndModify({query: {_id: mongojs.ObjectId(id)},
+        update: {$set: {plays: req.body.plays}},
+        new: true }, function(err, doc) {
+            res.json(doc);
+        });
+});
+
 app.delete('/songlist/:id', function(req, res) {
     var id = req.params.id;
     db.mirexplayer.remove({_id: mongojs.ObjectId(id)}, function(err, doc) {
         res.json(doc);
-    })
+    });
 });
 
 http.listen(3000, function(){

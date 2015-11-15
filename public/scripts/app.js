@@ -61,12 +61,13 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
     };
 
     $scope.onPlayerReady = function() {
+        $scope.currentSong = false;
+        $scope.nextSong = false;
         if ($scope.shuffleMode) {
             $scope.currentSong = $scope.randomizeNextSong();
         } else {
             $scope.currentSong = $scope.songList[0];
         }
-        console.log($scope.currentSong);
         $scope.player.loadVideoById($scope.currentSong.videoId);
     };
 
@@ -93,10 +94,12 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
     };
 
     $scope.playerInfo = function(currentSong, nextSong) {
-        socket.emit('player info', {
-            currentSong: currentSong,
-            nextSong: nextSong
-        });
+        if ($scope.player) {
+            socket.emit('player info', {
+                currentSong: currentSong,
+                nextSong: nextSong
+            });
+        }
     };
 
     $scope.getSongList = function() {
@@ -191,6 +194,10 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
 
     $scope.getSongList();
     $scope.initPlayer();
+
+    socket.on('new user', function() {
+        $scope.playerInfo($scope.currentSong, $scope.nextSong);
+    });
 
     socket.on('get song list', function() {
         $scope.getSongList();

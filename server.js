@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 
 //Socket.io
 io.on('connection', function(socket) {
+    io.sockets.emit('new user');
 
     socket.on('add song', function() {
         socket.broadcast.emit('get song list');

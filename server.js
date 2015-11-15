@@ -27,7 +27,7 @@ io.on('connection', function(socket) {
         socket.broadcast.emit('get song list');
     });
 
-    socket.on('player info', function(data) {
+    socket.on('set player info', function(data) {
         socket.broadcast.emit('get player info', data);
     });
 });

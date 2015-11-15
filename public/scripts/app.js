@@ -61,8 +61,7 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
     };
 
     $scope.onPlayerReady = function() {
-        $scope.currentSong = false;
-        $scope.nextSong = false;
+        $scope.serverActive = true;
         if ($scope.shuffleMode) {
             $scope.currentSong = $scope.randomizeNextSong();
         } else {
@@ -80,7 +79,7 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
                 } else {
                     $scope.nextSong = $scope.orderedNextSong();
                 }
-                $scope.playerInfo($scope.currentSong, $scope.nextSong);
+                $scope.setPlayerInfo($scope.currentSong, $scope.nextSong);
             }
         } else if (event.data === YT.PlayerState.ENDED) {
             $scope.songList.forEach(function(song) {
@@ -93,9 +92,9 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
         }
     };
 
-    $scope.playerInfo = function(currentSong, nextSong) {
-        if ($scope.player) {
-            socket.emit('player info', {
+    $scope.setPlayerInfo = function(currentSong, nextSong) {
+        if ($scope.serverActive) {
+            socket.emit('set player info', {
                 currentSong: currentSong,
                 nextSong: nextSong
             });
@@ -196,7 +195,7 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
     $scope.initPlayer();
 
     socket.on('new user', function() {
-        $scope.playerInfo($scope.currentSong, $scope.nextSong);
+        $scope.setPlayerInfo($scope.currentSong, $scope.nextSong);
     });
 
     socket.on('get song list', function() {

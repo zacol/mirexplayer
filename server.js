@@ -13,11 +13,6 @@ app.use(bodyParser.json());
 
 //Socket.io
 io.on('connection', function(socket) {
-    console.log('A user connected');
-
-    socket.on('disconnect', function() {
-        console.log('A user disconnected');
-    });
 
     socket.on('add song', function() {
         socket.broadcast.emit('get song list');

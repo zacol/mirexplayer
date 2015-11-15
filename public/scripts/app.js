@@ -4,7 +4,7 @@ var io = require('socket.io-client');
 var socket = io();
 var YouTubeIframeLoader = require('youtube-iframe');
 
-var app = angular.module('app', []);
+var app = angular.module('app', [require('angular-ui-router')]);
 
 // Services
 app.service('playerService', function($http, $q) {
@@ -66,6 +66,7 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
         } else {
             $scope.currentSong = $scope.songList[0];
         }
+        console.log($scope.currentSong);
         $scope.player.loadVideoById($scope.currentSong.videoId);
     };
 
@@ -196,8 +197,21 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
     });
 
     socket.on('get player info', function(data) {
-        $scope.currentSong = data.currentSong;
-        $scope.nextSong = data.nextSong;
-        $scope.getSongList();
+        if (data.currentSong && data.nextSong) {
+            $scope.currentSong = data.currentSong;
+            $scope.nextSong = data.nextSong;
+            $scope.getSongList();
+        }
     });
 }]);
+
+//Config
+app.config(function($stateProvider) {
+$stateProvider
+    .state('player', {
+        url: "/player",
+        views: {
+            "player": { templateUrl: "player.html" }
+        }
+    })
+});

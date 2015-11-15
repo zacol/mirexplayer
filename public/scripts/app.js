@@ -61,7 +61,7 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
     };
 
     $scope.onPlayerReady = function() {
-        $scope.serverActive = true;
+        $scope.playerActive = true;
         if ($scope.shuffleMode) {
             $scope.currentSong = $scope.randomizeNextSong();
         } else {
@@ -93,7 +93,7 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
     };
 
     $scope.setPlayerInfo = function(currentSong, nextSong) {
-        if ($scope.serverActive) {
+        if ($scope.playerActive) {
             socket.emit('set player info', {
                 currentSong: currentSong,
                 nextSong: nextSong
@@ -136,10 +136,7 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
 
     $scope.updateSong = function(song) {
         song.plays++;
-        playerService.updateSong(song).success(function(response) {
-            socket.emit('update song');
-            $scope.getSongList();
-        });
+        playerService.updateSong(song);
     };
 
     $scope.removeSong = function(songId) {

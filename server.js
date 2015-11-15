@@ -19,16 +19,12 @@ io.on('connection', function(socket) {
         socket.broadcast.emit('get song list');
     });
 
-    socket.on('update song', function() {
-        socket.broadcast.emit('get song list');
-    });
-
     socket.on('remove song', function() {
         socket.broadcast.emit('get song list');
     });
 
     socket.on('set player info', function(data) {
-        socket.broadcast.emit('get player info', data);
+        io.sockets.emit('get player info', data);
     });
 });
 

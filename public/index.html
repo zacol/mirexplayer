@@ -29,7 +29,7 @@
                             <input type="button" ng-click="searchSong()" class="ui button blue" value="Search">
                         </td>
                         <td>
-                            <input type="button" ng-click="shuffleMode = !shuffleMode" class="ui button" ng-class="{'positive': shuffleMode}" ng-if="playerActive" value="Shuffle">
+                            <input type="button" ng-click="shuffleMode = !shuffleMode" class="ui button" ng-class="{'positive': shuffleMode}" ng-show="playerActive" value="Shuffle">
                         </td>
                     </tr>
                 </tbody>

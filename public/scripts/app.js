@@ -93,12 +93,13 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
     };
 
     $scope.setPlayerInfo = function(currentSong, nextSong) {
-        if ($scope.playerActive) {
-            socket.emit('set player info', {
-                currentSong: currentSong,
-                nextSong: nextSong
-            });
+        if (!$scope.playerActive) {
+            return;
         }
+        socket.emit('set player info', {
+            currentSong: currentSong,
+            nextSong: nextSong
+        });
     };
 
     $scope.getSongList = function() {
@@ -200,11 +201,12 @@ app.controller('PlayerCtrl', ['$scope', 'playerService', function($scope, player
     });
 
     socket.on('get player info', function(data) {
-        if (data.currentSong && data.nextSong) {
-            $scope.currentSong = data.currentSong;
-            $scope.nextSong = data.nextSong;
-            $scope.getSongList();
+        if (!data.currentSong || !data.nextSong) {
+            return;
         }
+        $scope.currentSong = data.currentSong;
+        $scope.nextSong = data.nextSong;
+        $scope.getSongList();
     });
 }]);
 

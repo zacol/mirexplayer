@@ -15,12 +15,12 @@ app.use(bodyParser.json());
 io.on('connection', function(socket) {
     io.sockets.emit('new user');
 
-    socket.on('add song', function() {
-        socket.broadcast.emit('get song list');
+    socket.on('add song', function(data) {
+        socket.broadcast.emit('added song', data);
     });
 
-    socket.on('remove song', function() {
-        socket.broadcast.emit('get song list');
+    socket.on('remove song', function(data) {
+        socket.broadcast.emit('removed song', data);
     });
 
     socket.on('set player info', function(data) {
@@ -44,7 +44,10 @@ app.post('/songlist', function(req, res) {
 app.put('/songlist/:id', function(req, res) {
     var id = req.params.id;
     db.mirexplayer.findAndModify({query: {_id: mongojs.ObjectId(id)},
-        update: {$set: {plays: req.body.plays}},
+        update: {$set: {
+            plays: req.body.plays,
+            lastPlayed: req.body.lastPlayed
+        }},
         new: true }, function(err, doc) {
             res.json(doc);
         });

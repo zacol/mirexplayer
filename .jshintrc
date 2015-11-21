@@ -1,0 +1,18 @@
+{
+	"boss": true,
+	"curly": true,
+	"eqeqeq": true,
+	"eqnull": true,
+	"expr": true,
+	"immed": true,
+	"maxdepth": 3,
+	"noarg": true,
+	"quotmark": "single",
+	"undef": true,
+	"unused": true,
+
+	"browser": true,
+	"browserify": true,
+	"jquery": true,
+	"node": true
+}

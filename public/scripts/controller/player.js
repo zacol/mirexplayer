@@ -4,6 +4,7 @@ var YouTubeIframeLoader = require('youtube-iframe');
 
 module.exports = ['$scope', 'playerService', function($scope, playerService) {
     $scope.shuffleMode = true;
+    $scope.playedSongs = [];
 
     $scope.initPlayer = function() {
         YouTubeIframeLoader.load(function(YT) {
@@ -58,6 +59,7 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
         if (!$scope.playerActive) {
             return;
         }
+
         socket.emit('set player info', {
             currentSong: currentSong,
             nextSong: nextSong
@@ -67,17 +69,6 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
     $scope.getSongList = function() {
         playerService.getSongList().success(function(response) {
             $scope.songList = response;
-            if ($scope.currentSong === undefined && $scope.nextSong === undefined) {
-                return;
-            }
-            $scope.songList.forEach(function(song) {
-                if (song._id === $scope.currentSong._id) {
-                    song.nowPlaying = true;
-                }
-                if (song._id === $scope.nextSong._id) {
-                    song.nextPlaying = true;
-                }
-            });
         });
     };
 
@@ -85,18 +76,17 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
         var song = {
             videoId: videoId,
             title: songTitle,
-            plays: $scope.getLowerPlaysCounter(),
+            plays: 0,
             lastPlayed: 0
         };
 
         playerService.addSong(song).success(function(response) {
-            socket.emit('add song', song);
-
             $scope.search.phrase = '';
             $scope.search.results = [];
             
             $scope.songList.push(response);
 
+            socket.emit('add song', song);
         });
     };
 
@@ -104,15 +94,17 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
         song.plays++;
         song.lastPlayed = Math.floor(Date.now() / 1000);
         playerService.updateSong(song);
+
+        $scope.playedSongs.push($scope.currentSong);
     };
 
     $scope.removeSong = function(songId) {
         playerService.removeSong(songId).success(function() {
-            socket.emit('remove song', songId);
-
-            $scope.songList = $scope.songList.filter(function(song) {
+			$scope.songList = $scope.songList.filter(function(song) {
                 return song._id !== songId;
             });
+
+            socket.emit('remove song', songId);
         });
     };
 
@@ -123,23 +115,27 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
     };
 
     $scope.randomizeNextSong = function() {
-        var lowerPlaysCounter = $scope.getLowerPlaysCounter();
+    	var pool = [];
 
-        var songWithLowerPlays = $scope.songList.filter(function(song) {
-            return song.plays === lowerPlaysCounter;
-        });
+    	if ($scope.playedSongs.length === $scope.songList.length) {
+    		$scope.playedSongs = [];
+    	}
 
-        songWithLowerPlays.sort(function (firstSong, secondSong) {
-            if (firstSong.lastPlayed > secondSong.lastPlayed) {
-                return 1;
-            }
-            if (firstSong.lastPlayed < secondSong.lastPlayed) {
-                return -1;
-            }
-            return 0;
-        });
+    	$scope.songList.forEach(function(song) {
+			var index = $scope.playedSongs.indexOf(song);
 
-        return songWithLowerPlays[0];
+			if (index === -1) {
+				pool.push(song);
+			}
+    	});
+
+    	pool = $scope.fisherYatesShuffle(pool);
+
+    	if ($scope.currentSong && $scope.currentSong._id === pool[0]._id) {
+    		return pool[1];
+    	} else {
+    		return pool[0];
+    	}
     };
 
     $scope.orderedNextSong = function() {
@@ -154,13 +150,31 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
         }
     };
 
+    $scope.fisherYatesShuffle = function(array) {
+    	var arrayLength = array.length;
+    	var t;
+    	var i;
+
+  		while (arrayLength) {
+    		i = Math.floor(Math.random() * arrayLength--);
+
+    		t = array[arrayLength];
+    		array[arrayLength] = array[i];
+    		array[i] = t;
+  		}
+
+  		return array;
+    };
+
     $scope.getLowerPlaysCounter = function() {
         var lowerPlaysCounter = Number.POSITIVE_INFINITY;
+
         $scope.songList.forEach(function(song) {
             if (song.plays < lowerPlaysCounter) {
                 lowerPlaysCounter = song.plays;
             }
         });
+
         return lowerPlaysCounter;
     };
 
@@ -173,6 +187,7 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
 
     socket.on('added song', function(data) {
         $scope.songList.push(data);
+        
         $scope.$apply();
     });
 
@@ -180,6 +195,7 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
         $scope.songList = $scope.songList.filter(function(song) {
             return song._id !== data;
         });
+        
         $scope.$apply();
     });
 
@@ -187,8 +203,23 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
         if (!data.currentSong || !data.nextSong) {
             return;
         }
+        
         $scope.currentSong = data.currentSong;
         $scope.nextSong = data.nextSong;
-        $scope.getSongList();
+
+        $scope.songList.forEach(function(song) {
+            if (song._id === $scope.currentSong._id) {
+                song.nowPlaying = true;
+            } else {
+            	song.nowPlaying = false;
+            }
+            if (song._id === $scope.nextSong._id) {
+                song.nextPlaying = true;
+            } else {
+            	song.nextPlaying = false;
+            }
+        });
+
+        $scope.$apply();
     });
 }];

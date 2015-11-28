@@ -9,7 +9,7 @@ Mirex is a simple YouTube player based on MEAN stack (MongoDB, Exspress.js, Angu
 * Install Browserify globally by `npm install -g browserify`.
 * Install the rest of dependencies by `npm install`.
 * Go to folder */public/scripts/* and run `browserify app.js -o app.min.js`.
-* Now your Mirex Player is almost ready to work. Check next section to see hot to configure the player.
+* Now your Mirex Player is almost ready to work. Check next section to see how to configure the player.
 
 ## Server configuration
 
@@ -17,7 +17,7 @@ Mirex is a simple YouTube player based on MEAN stack (MongoDB, Exspress.js, Angu
 * Start node server by `node server.js`. If server start correctly you should see *Listening on *:3000*.
 * Open new terminal card and start MongoDB by `mongod`. If MongoDB start correctly you should see *[initandlisten] waiting for connections on port 27017*.
 * Open new terminal card and run MongoDB by `mongo`.
-* Create new database by `use merixplayer`. If new database was created correctly you should see *switched to db mirexplayer*.
+* Create new database by `use mirexplayer`. If new database was created correctly you should see *switched to db mirexplayer*.
 * Now your Mirex Player is ready to use.
 
 ## Using
@@ -25,6 +25,7 @@ Mirex is a simple YouTube player based on MEAN stack (MongoDB, Exspress.js, Angu
 Mirex Player has two routes:
 
 `http://localhost:3000/#/player` for user with player (only one user can control player). This user can start music, pause music and change player mode (repeat mode and shuffle mode). He can also do everything what normal user.
+
 `http://localhost:3000/` for all other users who wants to co-create playlist.
 
 ## Contribute

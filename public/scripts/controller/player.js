@@ -3,7 +3,9 @@ var socket = io();
 var YouTubeIframeLoader = require('youtube-iframe');
 
 module.exports = ['$scope', 'playerService', function($scope, playerService) {
-    $scope.shuffleMode = true;
+    $scope.repeatMode = false;
+    $scope.shuffleMode = false;
+    $scope.playingCounter = 0;
     $scope.playedSongs = [];
 
     $scope.initPlayer = function() {
@@ -33,24 +35,39 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
 
     $scope.onPlayerStateChange = function(event) {
         if (event.data === YT.PlayerState.PLAYING) {
-            if ($scope.nextSong === undefined || $scope.nextSong === false) {
-                $scope.updateSong($scope.currentSong);
+        	$scope.playingCounter++;
 
-                if ($scope.shuffleMode) {
+        	if ($scope.playingCounter !== 1) {
+            	return;
+        	}
+
+        	$scope.updateSong($scope.currentSong);
+
+            if ($scope.repeatMode || $scope.playedSongs.length < $scope.songList.length) {
+            	if ($scope.shuffleMode) {
                     $scope.nextSong = $scope.randomizeNextSong();
                 } else {
                     $scope.nextSong = $scope.orderedNextSong();
                 }
-                
-                $scope.setPlayerInfo($scope.currentSong, $scope.nextSong);
             }
+            
+            $scope.setPlayerInfo($scope.currentSong, $scope.nextSong);
         } else if (event.data === YT.PlayerState.ENDED) {
+        	if (!$scope.nextSong) {
+        		$scope.setPlayerInfo();
+        		return;
+        	}
+
+        	$scope.playingCounter = 0;
+
             $scope.songList.forEach(function(song) {
                 if (song._id === $scope.nextSong._id) {
                     $scope.currentSong = song;
                 }
             });
+            
             $scope.nextSong = false;
+            
             $scope.player.loadVideoById($scope.currentSong.videoId);
         }
     };
@@ -95,7 +112,9 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
         song.lastPlayed = Math.floor(Date.now() / 1000);
         playerService.updateSong(song);
 
-        $scope.playedSongs.push($scope.currentSong);
+        $scope.playedSongs.push(song);
+
+        socket.emit('update song', song);
     };
 
     $scope.removeSong = function(songId) {
@@ -142,6 +161,7 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
         for(var index = 0; index < $scope.songList.length; index += 1) {
             if($scope.songList[index]['_id'] === $scope.currentSong._id) {
                 if (index === $scope.songList.length - 1) {
+                	$scope.playedSongs = [];
                     return $scope.songList[0];
                 } else {
                     return $scope.songList[index + 1];
@@ -191,6 +211,16 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
         $scope.$apply();
     });
 
+    socket.on('updated song', function(data) {
+    	$scope.songList.forEach(function(song) {
+    		if (song._id === data._id) {
+    			song.plays++;
+    		}
+    	});
+
+        $scope.$apply();
+    });
+
     socket.on('removed song', function(data) {
         $scope.songList = $scope.songList.filter(function(song) {
             return song._id !== data;
@@ -200,20 +230,16 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
     });
 
     socket.on('get player info', function(data) {
-        if (!data.currentSong || !data.nextSong) {
-            return;
-        }
-        
         $scope.currentSong = data.currentSong;
         $scope.nextSong = data.nextSong;
 
         $scope.songList.forEach(function(song) {
-            if (song._id === $scope.currentSong._id) {
+            if ($scope.currentSong && song._id === $scope.currentSong._id) {
                 song.nowPlaying = true;
             } else {
             	song.nowPlaying = false;
             }
-            if (song._id === $scope.nextSong._id) {
+            if ($scope.nextSong && song._id === $scope.nextSong._id) {
                 song.nextPlaying = true;
             } else {
             	song.nextPlaying = false;

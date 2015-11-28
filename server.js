@@ -19,6 +19,10 @@ io.on('connection', function(socket) {
         socket.broadcast.emit('added song', data);
     });
 
+    socket.on('update song', function(data) {
+        socket.broadcast.emit('updated song', data);
+    });
+
     socket.on('remove song', function(data) {
         socket.broadcast.emit('removed song', data);
     });

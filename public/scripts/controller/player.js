@@ -6,6 +6,10 @@ module.exports = ['$scope', 'playerService', function($scope, playerService) {
     $scope.repeatMode = false;
     $scope.shuffleMode = false;
     $scope.playingCounter = 0;
+
+    $scope.search = {};
+    $scope.search.phrase = '';
+
     $scope.playedSongs = [];
 
     $scope.initPlayer = function() {
